@@ -1,19 +1,17 @@
 import React, {Component} from 'react';
 
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
+import {StatusBar} from 'react-native';
 
 import './config/ReactotronConfig';
 import Routes from './routes';
 
 export default class App extends Component {
   render() {
-    return <Routes />;
+    return (
+      <>
+        <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
+        <Routes />
+      </>
+    );
   }
 }
