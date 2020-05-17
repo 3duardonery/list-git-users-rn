@@ -103,4 +103,3 @@ export const RemoveProfileButtonText = styled.Text`
   color: #fff;
   text-transform: uppercase;
 `;
-
