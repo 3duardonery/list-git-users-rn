@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 
-import {Keyboard, ActivityIndicator} from 'react-native';
+import {Keyboard, ActivityIndicator, View, Text, Button} from 'react-native';
+
+import PropTypes from 'prop-types';
+
+import Modal from 'react-native-modal';
 
 import AsyncStorage from '@react-native-community/async-storage';
 
@@ -25,10 +29,21 @@ import {
 } from './styles';
 
 export default class Main extends Component {
+  static navigationOptions = {
+    title: 'Usuários',
+  };
+
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
+    }).isRequired,
+  };
+
   state = {
     newUser: '',
     users: [],
     loading: false,
+    showModal: false,
   };
 
   async componentDidMount() {
@@ -73,8 +88,22 @@ export default class Main extends Component {
     Keyboard.dismiss();
   };
 
+  handleNavigate = (user) => {
+    const {navigation} = this.props;
+
+    navigation.navigate('User', {user});
+  };
+
+  handleShowProfile = () => {
+    this.setState({showModal: true});
+  };
+
+  handleHideProfile = () => {
+    this.setState({showModal: false});
+  };
+
   render() {
-    const {users, newUser, loading} = this.state;
+    const {users, newUser, loading, showModal} = this.state;
 
     return (
       <Container>
@@ -84,7 +113,7 @@ export default class Main extends Component {
             autoCapitalize="none"
             placeholder="Adicionar Usuário"
             value={newUser}
-            onChangeText={text => this.setState({newUser: text})}
+            onChangeText={(text) => this.setState({newUser: text})}
             returnKeyType="done"
             onSubmit={this.handleAddUser}
           />
@@ -99,28 +128,39 @@ export default class Main extends Component {
 
         <List
           data={users}
-          keyExtractor={user => user.login}
+          keyExtractor={(user) => user.login}
           renderItem={({item}) => (
             <User>
               <Avatar source={{uri: item.avatar}} />
               <Name>{item.name}</Name>
               <Bio>{item.bio}</Bio>
 
-              <ProfileButton onPress={() => {}}>
+              <ProfileButton onPress={() => this.handleNavigate(item)}>
                 <ProfileButtonText>Ver Perfil</ProfileButtonText>
               </ProfileButton>
 
               <RemoveProfileButton onPress={() => {}}>
-                <RemoveProfileButtonText>Remover Usuário</RemoveProfileButtonText>
+                <RemoveProfileButtonText>
+                  Remover Usuário
+                </RemoveProfileButtonText>
               </RemoveProfileButton>
             </User>
           )}
         />
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: '#fff',
+          }}>
+          <Modal isVisible={showModal}>
+            <View style={{ flex: 1 }}>
+              <Text style={{color: '#fff'}}>I am the modal content!</Text>
+              <Button title="Hide modal" onPress={this.handleHideProfile} />
+            </View>
+          </Modal>
+        </View>
       </Container>
     );
   }
 }
-
-Main.navigationOptions = {
-  title: 'Usuários',
-};
